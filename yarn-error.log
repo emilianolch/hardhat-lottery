@@ -1,0 +1,29 @@
+Arguments: 
+  /home/emiliano/.nvm/versions/node/v16.17.0/bin/node /home/emiliano/.node/corepack/yarn/1.22.19/bin/yarn.js add hardhat
+
+PATH: 
+  /home/emiliano/.rbenv/shims:/home/emiliano/.rbenv/bin:/home/emiliano/.vscode-server/bin/d045a5eda657f4d7b676dedbfa7aab8207f8a075/bin/remote-cli:/home/emiliano/.nvm/versions/node/v16.17.0/bin:/home/emiliano/.cargo/bin:/home/emiliano/.rbenv/shims:/home/emiliano/.rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Python310/Scripts/:/mnt/c/Python310/:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files/Docker/Docker/resources/bin:/mnt/c/ProgramData/DockerDesktop/version-bin:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/nodejs/:/mnt/c/ProgramData/chocolatey/bin:/mnt/c/Program Files/Git/cmd:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Users/emili/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/emili/AppData/Local/Programs/Microsoft VS Code/bin:/mnt/c/Users/emili/.dotnet/tools:/mnt/c/Exercism:/mnt/c/Users/emili/AppData/Roaming/npm:/snap/bin:/home/emiliano/.dotnet/tools
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  16.17.0
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/hardhat: ETIMEDOUT
+      at Timeout._onTimeout (/home/emiliano/.node/corepack/yarn/1.22.19/lib/cli.js:141550:19)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+npm manifest: 
+  No manifest
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
