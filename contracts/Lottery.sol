@@ -89,16 +89,14 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
         public
         view
         override
-        returns (
-            bool upkeepNeeded,
-            bytes memory /* performData */
-        )
+        returns (bool upkeepNeeded, bytes memory performData)
     {
         bool isOpen = (s_lotteryState == LotteryState.OPEN);
         bool timePassed = block.timestamp - s_lastTimestamp > i_interval;
         bool hasPlayers = s_players.length > 0;
         bool hasBalance = address(this).balance > 0;
         upkeepNeeded = isOpen && timePassed && hasPlayers && hasBalance;
+        performData = "";
     }
 
     function enterLottery() public payable {
