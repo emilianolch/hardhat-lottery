@@ -22,9 +22,6 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
     }
 
     // State variables
-    address payable[] private s_players;
-    LotteryState private s_lotteryState;
-    uint256 private s_lastTimestamp;
     uint private immutable i_entranceFee;
     VRFCoordinatorV2Interface private immutable i_vrfCoordinator;
     bytes32 private immutable i_gasLane;
@@ -35,10 +32,12 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
     uint32 private constant NUM_WORDS = 1;
 
     // Lottery variables
+    address payable[] private s_players;
+    LotteryState private s_lotteryState;
+    uint256 private s_lastTimestamp;
     address private s_recentWinner;
 
     // Events
-    // Name events with the function name reversed
     event LotteryEnter(address indexed player);
     event RandomWinnerRequest(uint256 requestId);
     event WinnerPick(address winner);
@@ -123,6 +122,18 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
 
     function getRecentWinner() public view returns (address) {
         return s_recentWinner;
+    }
+
+    function getNumberOfPlayers() public view returns (uint256) {
+        return s_players.length;
+    }
+
+    function getLatestTimestamp() public view returns (uint256) {
+        return s_lastTimestamp;
+    }
+
+    function getRequestConfirmations() public pure returns (uint16) {
+        return REQUEST_CONFIRMATIONS;
     }
 
     function fulfillRandomWords(
