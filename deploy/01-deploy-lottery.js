@@ -7,7 +7,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
   const chainId = network.config.chainId;
-  let vrfCoordinator, gasLane, subscriptionId;
+  let vrfCoordinator, subscriptionId;
 
   if (developmentChain) {
     vrfCoordinator = await ethers.getContract("VRFCoordinatorV2Mock", deployer);
@@ -17,11 +17,11 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     await vrfCoordinator.fundSubscription(subscriptionId, VRF_FUND_AMOUNT);
   } else {
     vrfCoordinator = networkConfig[chainId].vrfCoordinator;
-    gasLane = networkConfig[chainId].gasLane;
     subscriptionId = networkConfig[chainId].subscriptionId;
   }
 
   const entranceFee = networkConfig[chainId].entranceFee;
+  const gasLane = networkConfig[chainId].gasLane;
   const callbackGasLimit = networkConfig[chainId].callbackGasLimit;
   const interval = networkConfig[chainId].interval;
 
@@ -33,7 +33,6 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     callbackGasLimit,
     interval,
   ];
-
   const lottery = await deploy("Lottery", {
     from: deployer,
     args,
