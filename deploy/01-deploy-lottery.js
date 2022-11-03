@@ -40,6 +40,11 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     waitConfirmations: network.config.blockConfirmations || 1,
   });
 
+  // Add consumer to VRF subscription
+  if (developmentChain) {
+    await vrfCoordinator.addConsumer(subscriptionId, lottery.address);
+  }
+
   if (!developmentChain && process.env["ETHERSCAN_API_KEY"]) {
     // Verify with etherscan
     console.log("Verifying contract...");
