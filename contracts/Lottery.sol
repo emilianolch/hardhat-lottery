@@ -110,6 +110,23 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
         emit LotteryEnter(msg.sender);
     }
 
+    function fulfillRandomWords(
+        uint256, /* requestId */
+        uint256[] memory randomWords
+    ) internal override {
+        uint256 i = randomWords[0] % s_players.length;
+        address payable recentWinner = s_players[i];
+        s_recentWinner = recentWinner;
+        s_players = new address payable[](0);
+        s_lotteryState = LotteryState.OPEN;
+        s_lastTimestamp = block.timestamp;
+        (bool success, ) = recentWinner.call{value: address(this).balance}("");
+        if (!success) {
+            revert Lottery__TransferFiled();
+        }
+        emit WinnerPick(recentWinner);
+    }
+
     function getEntranceFee() public view returns (uint) {
         return i_entranceFee;
     }
@@ -134,20 +151,11 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
         return REQUEST_CONFIRMATIONS;
     }
 
-    function fulfillRandomWords(
-        uint256, /* requestId */
-        uint256[] memory randomWords
-    ) internal override {
-        uint256 i = randomWords[0] % s_players.length;
-        address payable recentWinner = s_players[i];
-        s_recentWinner = recentWinner;
-        s_players = new address payable[](0);
-        s_lotteryState = LotteryState.OPEN;
-        s_lastTimestamp = block.timestamp;
-        (bool success, ) = recentWinner.call{value: address(this).balance}("");
-        if (!success) {
-            revert Lottery__TransferFiled();
-        }
-        emit WinnerPick(recentWinner);
+    function getLotteryState() public view returns (LotteryState) {
+        return s_lotteryState;
+    }
+
+    function getInterval() public view returns (uint256) {
+        return i_interval;
     }
 }

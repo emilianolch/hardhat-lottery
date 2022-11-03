@@ -51,3 +51,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
       .catch((error) => console.log(error));
   }
 };
+module.exports.tags = ["all", "lottery"];
