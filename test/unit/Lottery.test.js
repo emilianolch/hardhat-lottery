@@ -90,4 +90,21 @@ const {
           assert(upkeepNeeded);
         });
       });
+      describe("performUpkeep", function() {
+        it("reverts if checkUpkeep is false", async function() {
+          await expect(lottery.performUpkeep([])).to.be.revertedWith(
+            "Lottery__UpkeepNotNeeded"
+          );
+        });
+        it("emits randome winner request and changes lottery state", async function() {
+          await lottery.enterLottery({ value: entranceFee });
+          await time.increase(interval.toNumber() + 1);
+          await expect(lottery.performUpkeep("0x")).to.emit(
+            lottery,
+            "RandomWinnerRequest"
+          );
+          const state = await lottery.getLotteryState();
+          assert.equal(state.toString(), "1");
+        });
+      });
     });
