@@ -39,7 +39,6 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
 
     // Events
     event LotteryEnter(address indexed player);
-    event RandomWinnerRequest(uint256 requestId);
     event WinnerPick(address winner);
 
     constructor(
@@ -73,14 +72,13 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
         }
 
         s_lotteryState = LotteryState.CALCULATING;
-        uint256 requestId = i_vrfCoordinator.requestRandomWords(
+        i_vrfCoordinator.requestRandomWords(
             i_gasLane,
             i_subscriptionId,
             REQUEST_CONFIRMATIONS,
             i_callbackGasLimit,
             NUM_WORDS
         );
-        emit RandomWinnerRequest(requestId);
     }
 
     function checkUpkeep(

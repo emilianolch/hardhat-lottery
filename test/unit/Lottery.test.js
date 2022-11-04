@@ -96,13 +96,15 @@ const {
             "Lottery__UpkeepNotNeeded"
           );
         });
-        it("emits randome winner request and changes lottery state", async function() {
+        it("calls vrf coordinator and changes lottery state", async function() {
           await lottery.enterLottery({ value: entranceFee });
           await time.increase(interval.toNumber() + 1);
-          await expect(lottery.performUpkeep("0x")).to.emit(
-            lottery,
-            "RandomWinnerRequest"
-          );
+          const txResponse = await lottery.performUpkeep("0x");
+          const txReceipt = await txResponse.wait(1);
+          const requestId = vrfCoordinatorMock.interface.parseLog(
+            txReceipt.events[0]
+          ).args.requestId;
+          assert(requestId.toNumber() > 0);
           const state = await lottery.getLotteryState();
           assert.equal(state.toString(), "1");
         });
