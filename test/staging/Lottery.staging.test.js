@@ -47,8 +47,16 @@ developmentChain
               resolve();
             });
 
-            await lottery.enterLottery({ value: entranceFee });
+            const txResponse = await lottery.enterLottery({
+              value: entranceFee,
+            });
+            console.log("Entered lottery. Waiting for confirmation...");
+            await txResponse.wait(1);
             const winnerStartingBalance = await accounts[0].getBalance();
+            console.log(
+              "Confirmation received. Balance:",
+              winnerStartingBalance.toString()
+            );
           });
         });
       });
