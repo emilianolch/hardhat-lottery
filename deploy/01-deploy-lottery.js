@@ -7,16 +7,17 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
   const chainId = network.config.chainId;
-  let vrfCoordinator, subscriptionId;
+  let vrfCoordinator, vrfCoordinatorAddress, subscriptionId;
 
   if (developmentChain) {
     vrfCoordinator = await ethers.getContract("VRFCoordinatorV2Mock", deployer);
+    vrfCoordinatorAddress = vrfCoordinator.address;
     const transactionResponse = await vrfCoordinator.createSubscription();
     const transactionReceipt = await transactionResponse.wait(1);
     subscriptionId = transactionReceipt.events[0].args.subId;
     await vrfCoordinator.fundSubscription(subscriptionId, VRF_FUND_AMOUNT);
   } else {
-    vrfCoordinator = networkConfig[chainId].vrfCoordinator;
+    vrfCoordinatorAddress = networkConfig[chainId].vrfCoordinator;
     subscriptionId = networkConfig[chainId].subscriptionId;
   }
 
@@ -26,7 +27,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const interval = networkConfig[chainId].interval;
 
   const args = [
-    vrfCoordinator.address,
+    vrfCoordinatorAddress,
     entranceFee,
     gasLane,
     subscriptionId,
@@ -48,12 +49,15 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   if (!developmentChain && process.env["ETHERSCAN_API_KEY"]) {
     // Verify with etherscan
     console.log("Verifying contract...");
-    run("verify:verify", {
-      address: lottery.address,
-      constructorArguments: args,
-    })
-      .then(() => console.log("Contract verified"))
-      .catch((error) => console.log(error));
+    try {
+      await run("verify:verify", {
+        address: lottery.address,
+        constructorArguments: args,
+      });
+      console.log("Contract verified");
+    } catch (error) {
+      console.log(error);
+    }
   }
 };
 module.exports.tags = ["all", "lottery"];
