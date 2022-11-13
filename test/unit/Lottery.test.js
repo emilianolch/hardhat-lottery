@@ -25,7 +25,7 @@ const {
       });
 
       describe("constructor", function() {
-        it("should initialize the contract correctly", async function() {
+        it("initializes the contract correctly", async function() {
           const lotteryState = await lottery.getLotteryState();
           assert.equal(lotteryState.toString(), "0");
           assert.equal(interval.toString(), networkConfig[chainId].interval);
@@ -35,29 +35,22 @@ const {
       });
 
       describe("enterLottery", function() {
-        it("should revert if don't send enough ETH", async function() {
+        it("reverts if don't send enough ETH", async function() {
           await expect(lottery.enterLottery()).to.be.revertedWith(
             "Lottery__NotEnoughETH"
           );
         });
 
-        it("should add player to lottery", async function() {
-          await lottery.enterLottery({
-            value: entranceFee,
-          });
-
-          const player = await lottery.getPlayer(0);
-          assert.equal(deployer, player);
-        });
-
-        it("should emit enter event", async function() {
+        it("adds player to lottery and emits event", async function() {
           await expect(lottery.enterLottery({ value: entranceFee })).to.emit(
             lottery,
             "LotteryEnter"
           );
+          const player = await lottery.getPlayer(0);
+          assert.equal(deployer, player);
         });
 
-        it("should not permit entrance while calculating", async function() {
+        it("doesn't permit entrance while calculating", async function() {
           await lottery.enterLottery({ value: entranceFee });
           await time.increase(interval.toNumber() + 1);
           await lottery.performUpkeep([]);
@@ -68,13 +61,13 @@ const {
       });
 
       describe("checkUpkeep", async function() {
-        it("should return false if there are no players", async function() {
+        it("returns false if there are no players", async function() {
           await time.increase(interval.toNumber() + 1);
           const { upkeepNeeded } = await lottery.callStatic.checkUpkeep([]);
           assert(!upkeepNeeded);
         });
 
-        it("should return false if lottery isn't open", async function() {
+        it("returns false if lottery isn't open", async function() {
           await lottery.enterLottery({ value: entranceFee });
           await time.increase(interval.toNumber() + 1);
           await lottery.performUpkeep([]);
@@ -153,13 +146,18 @@ const {
                 const numPlayers = await lottery.getNumberOfPlayers();
                 const state = await lottery.getLotteryState();
                 const winnerEndBalance = await accounts[1].getBalance();
+                const prizeRate = await lottery.getPrizeRate();
+                const prize = entranceFee
+                  .mul(4)
+                  .mul(prizeRate)
+                  .div(100);
 
                 assert(endingTimestamp.gt(startingTimestamp));
                 assert.equal(numPlayers.toString(), "0");
                 assert.equal(state.toString(), "0");
                 assert.equal(
                   winnerEndBalance.toString(),
-                  winnerStartingBalance.add(entranceFee.mul(4)).toString()
+                  winnerStartingBalance.add(prize).toString()
                 );
               } catch (e) {
                 reject(e);
